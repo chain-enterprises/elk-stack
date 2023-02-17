@@ -67,14 +67,21 @@ services:
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
       - ./logstash/pipeline:/usr/share/logstash/pipeline:ro,Z
+      - ./logstash/queries:/usr/share/logstash/queries:ro,Z
+      - ./mysql_connector/mysql-connector-j-8.0.32.jar:/usr/share/logstash/logstash-core/lib/jars/mysql-connector-java.jar   
     ports:
       - 5044:5044
       - 50000:50000/tcp
       - 50000:50000/udp
       - 9600:9600
     environment:
-      LS_JAVA_OPTS: -Xms256m -Xmx256m
+      LS_JAVA_OPTS: -Xms1g -Xmx1g
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
+      LOGSTASH_JDBC_DRIVER_JAR_LOCATION: ${LOGSTASH_JDBC_DRIVER_JAR_LOCATION:-}
+      LOGSTASH_JDBC_DRIVER: ${LOGSTASH_JDBC_DRIVER:-}
+      LOGSTASH_JDBC_URL: ${LOGSTASH_JDBC_URL:-}
+      LOGSTASH_JDBC_USERNAME: ${LOGSTASH_JDBC_USERNAME:-}
+      LOGSTASH_JDBC_PASSWORD: ${LOGSTASH_JDBC_PASSWORD:-}
     networks:
       - elk
     depends_on:
@@ -91,6 +98,8 @@ services:
     ports:
       - 5601:5601
     environment:
+      SERVER_NAME: dashboards.bitcards.com
+      SERVER_PUBLICBASEURL: ${SERVER_PUBLICBASEURL:-} 
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
     networks:
       - elk
